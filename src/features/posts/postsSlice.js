@@ -2,7 +2,7 @@ import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
 import { sub } from "date-fns";
 import initialState from "./postInitialState";
 import axios
- from "axios";
+    from "axios";
 const POSTS_URL = 'https://jsonplaceholder.typicode.com/posts';
 
 
@@ -25,7 +25,7 @@ const postsSlice = createSlice({
                     payload: {
                         id: nanoid(),
                         title,
-                        content,
+                        body: content,
                         date: new Date().toISOString(),
                         userId,
                         reactions: {
@@ -49,14 +49,14 @@ const postsSlice = createSlice({
 
         }
     },
-    extraReducers(builder){
+    extraReducers(builder) {
         builder
-        .addCase(fetchPosts.pending,(state, action) => {
-            state.status = "loading";
-        })
-        .addCase(fetchPosts.fulfilled,(state, action) => {
-            state.status = "succeeded";
-            let min = 1;
+            .addCase(fetchPosts.pending, (state, action) => {
+                state.status = "loading";
+            })
+            .addCase(fetchPosts.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                let min = 1;
                 const loadedPosts = action.payload.map(post => {
                     post.date = sub(new Date(), { minutes: min++ }).toISOString();
                     post.reactions = {
@@ -71,13 +71,16 @@ const postsSlice = createSlice({
 
                 // Add any fetched posts to the array
                 state.posts = state.posts.concat(loadedPosts)
-        })
-        .addCase(fetchPosts.rejected,(state, action) => {
-            state.status = "failed";
-        })
+            })
+            .addCase(fetchPosts.rejected, (state, action) => {
+                state.status = "failed";
+            })
     }
 });
 
 export const selectAllPosts = (state) => state.posts.posts;
+export const selectPostStatus = (state) => state.posts.status;
+export const selectPostError = (state) => state.posts.error;
+
 export const { postAdded, reactionAdded } = postsSlice.actions;
 export default postsSlice.reducer;
