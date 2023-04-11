@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { postAdded } from "./postsSlice";
+import { postAdded, addNewPost } from "./postsSlice";
 import { selectAllUsers } from "../users/usersSlice";
 
 
@@ -19,21 +19,19 @@ const AddPostForm = () => {
 
     const onSavedPostClicked = () => {
         if (title && content) {
-            dispatch(
-                postAdded(title, content, userId)
-            );
+            dispatch(addNewPost({ title, body: content, userId }));
             setContent('');
             setTitle('');
             setUserId('');
         }
     }
-    const userOptions = users.map(user =>{
+    const userOptions = users.map(user => {
         return (
             <option key={user.id} value={user.id} >{user.name}</option>
         )
     });
 
-    const canSave = Boolean(userId) && Boolean (title) && Boolean(content);
+    const canSave = Boolean(userId) && Boolean(title) && Boolean(content);
 
     return (
         <section>
